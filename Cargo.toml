@@ -1,0 +1,6 @@
+[package]
+name = "struct_gen"
+version = "0.1.0"
+authors = ["robertdurst <rsdurst@colby.edu>"]
+
+[dependencies]
