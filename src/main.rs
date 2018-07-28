@@ -1,20 +1,20 @@
 #[macro_use]
 extern crate struct_gen;
 
+// Always have to bring traits into scope to use them.
+// A bit weird here since the trait is used/implemented
+// within the struct_gen macro.
+use struct_gen::Zero; 
+
 fn main() {
     struct_gen!(
         Example {
-                data: String | "Something".to_string()
-                height: i32 | 10
+            height: i32 
+            size:   f64
+            word:   String
         }
     );
 
-    impl Example {
-        fn exists(&self) {
-            println!("I exist! My height is: {} and data is: {}", self.height, self.data);
-        }
-    }
-
-    let e = Example::new();
-    e.exists();
+    let example_struct = Example::new();
+    println!("{:#?}", example_struct);
 }
