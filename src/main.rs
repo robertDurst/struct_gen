@@ -12,6 +12,7 @@ fn main() {
             height: i32 
             size:   f64
             word:   String
+            thing: char
         }
     );
 
