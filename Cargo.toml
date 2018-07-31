@@ -2,5 +2,12 @@
 name = "struct_gen"
 version = "0.1.0"
 authors = ["robertdurst <rsdurst@colby.edu>"]
+description = "Automagically generate structs."
+repository = "https://github.com/robertDurst/struct_gen"
+readme = "README.md"
+keywords = ["macro", "struct", "gen"]
+categories = ["development-tools"]
 
-[dependencies]
+[badges]
+travis-ci = { repository = "robertDurst/struct_gen" }
+
