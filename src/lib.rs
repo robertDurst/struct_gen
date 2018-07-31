@@ -1,3 +1,50 @@
+/// `struct_gen!` is a macro for generating struct definitions and constructors.
+/// 
+/// # struct_gen
+/// 
+/// `struct_gen!` is the macro at the heart of this crate. It is responsible for generating
+/// the boilerplate for a struct, from defining the struct to implementing its static
+/// constructor method. Ultimately, it is desirable for this macro to be as abstract and as
+/// flexible as possible, accepting struct's with:
+/// * lifetimes
+/// * smart pointers
+/// * generics
+/// * optional non-default/zero values per field in the constructor
+/// * etc.
+/// 
+/// ## Example
+/// ```rust
+/// #[macro_use]
+/// extern crate struct_gen;
+/// 
+/// use struct_gen::Zero; 
+/// 
+/// fn main() {
+///     struct_gen!(
+///         Example {
+///             height: i32 
+///             size:   f64
+///             thing: char
+///         }
+///     );
+/// 
+///     let example_struct = Example::new();
+///     println!("{:#?}", example_struct);
+/// 
+/// # assert_eq!(example_struct.height, 0);
+/// # assert_eq!(example_struct.size, 0.0);
+/// # assert_eq!(example_struct.thing, 0 as char);
+/// }
+/// 
+/// // |-------        Output:       ---------|
+/// //
+/// // Example {
+/// //    height: 0,
+/// //    size: 0.0,
+/// //    thing: '\u{0}'
+/// // }
+/// 
+
 #[macro_export]
 macro_rules! struct_gen (
     ($s:ident {$( $i: ident : $t: ty)*} ) => (
@@ -217,12 +264,45 @@ mod test_struct_gen {
     }
 }
 
+/// `Zero` is a trait for defining the zoor method,
+/// zero-or-override, defining a method that returns
+/// the default/zero value for a given type.
+/// 
+/// # Zero
+/// 
+/// The `Zero` trait defines a way for a type to
+/// return the zero, or default, value of itself.
+/// This is used within the `struct_gen!` macro's constructor
+/// generation method to construct a base struct type with
+/// default values. Ultimately, there will be a way to take
+/// an input and override these values, but for now only
+/// a default is implemented.
+/// 
+/// In order for a user to make a custom type compatible
+/// with the `struct_gen!` macro, they will need to implement
+/// this trait -- done easily with the `impl_zero!` macro.
 pub trait Zero {
     type Item;
     /// zoor stands for zero or overide
     fn zoor() -> Self::Item;
 }
 
+/// `impl_zero!` is a macro for implementing the `Zero` trait in an 
+/// ergonomically friendly way.
+/// 
+/// # impl_zero
+/// This macro is used to generate all the base default
+/// cases for common/primitive types. It does this by 
+/// implementing the `Zero` trait for these types, in an
+/// ergonomatically friendly way:
+/// ```no-run
+/// impl_zero!(TYPE, DEFAULT);
+/// ```
+/// 
+/// ## Example
+/// ```no-run
+/// impl_zero!(i32, 0);
+/// ```
 #[macro_export]
 macro_rules!  impl_zero {
     ($t: ty, $e: expr) => {
