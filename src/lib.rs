@@ -38,6 +38,28 @@
 
 #[macro_export]
 macro_rules! struct_gen (
+    ($s:ident <$($lt: tt),*> {$( $i: ident : $t: ty)*} ) => (
+        #[derive(Debug)]
+        struct $s <$($lt,)*> {
+            $(
+                $i: $t,
+            )*
+        }
+
+        impl<$($lt,)*> $s<$($lt,)*> {
+            pub fn new() -> $s<$($lt,)*> {
+                $s {
+                    $(
+                        $i: <$t>::zoor(),
+                    )*
+                }
+            }
+       }
+    );
+
+    
+
+
     ($s:ident {$( $i: ident : $t: ty)*} ) => (
         #[derive(Debug)]
         struct $s {
@@ -101,6 +123,15 @@ pub trait Zero {
 /// ```
 #[macro_export]
 macro_rules! impl_zero {
+     (<$lt: tt>, $t:ty, $e:expr) => {
+        impl<$lt> Zero for $t {
+            type Item = $t;
+            fn zoor() -> Self::Item {
+                $e
+            }
+        }
+    };
+
     ($t:ty, $e:expr) => {
         impl Zero for $t {
             type Item = $t;
@@ -111,25 +142,35 @@ macro_rules! impl_zero {
     };
 }
 
+// Boolean
 impl_zero!(bool, false);
 
-// Define char as 0 in unicode aka null
+// Char - define char as 0 in unicode aka null
 impl_zero!(char, 0 as char);
 
+// Signed Integers
 impl_zero!(i8, 0);
 impl_zero!(i16, 0);
 impl_zero!(i32, 0);
 impl_zero!(i64, 0);
 impl_zero!(isize, 0);
 
+// Unsigned Integers
 impl_zero!(u8, 0);
 impl_zero!(u16, 0);
 impl_zero!(u32, 0);
 impl_zero!(u64, 0);
 impl_zero!(usize, 0);
 
+// Floats
 impl_zero!(f32, 0.0);
 impl_zero!(f64, 0.0);
+
+// Strings
+impl_zero!(String, String::from(""));
+
+// Lifetimes
+impl_zero!(<'a>, &'a str, "");
 
 #[cfg(test)]
 mod test_struct_gen {
@@ -267,5 +308,35 @@ mod test_struct_gen {
 
         let e = Example::new();
         assert_eq!(e.a, 0.0);
+    }
+
+    #[test]
+    fn it_works_with_strings() {
+        struct_gen!(Example { a: String });
+
+        let e = Example::new();
+        assert_eq!(e.a, String::from(""));
+    }
+
+    #[test]
+    fn it_works_with_a_single_lifetime() {
+        struct_gen!(Example<'a> {a: &'a str});
+
+        let e = Example::new();
+        assert_eq!(e.a, "");
+    }
+
+    #[test]
+    fn it_works_with_multiple_lifetimes() {
+        struct_gen!(Example<'a, 'b, 'c> {
+            a: &'a str
+            b: &'b str
+            c: &'c str
+        });
+
+        let e = Example::new();
+        assert_eq!(e.a, "");
+        assert_eq!(e.b, "");
+        assert_eq!(e.c, "");
     }
 }
