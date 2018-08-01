@@ -57,7 +57,7 @@ macro_rules! struct_gen (
        }
     );
 
-    
+
 
 
     ($s:ident {$( $i: ident : $t: ty)*} ) => (
@@ -123,7 +123,7 @@ pub trait Zero {
 /// ```
 #[macro_export]
 macro_rules! impl_zero {
-     (<$lt: tt>, $t:ty, $e:expr) => {
+    (< $lt:tt > , $t:ty, $e:expr) => {
         impl<$lt> Zero for $t {
             type Item = $t;
             fn zoor() -> Self::Item {
@@ -169,8 +169,11 @@ impl_zero!(f64, 0.0);
 // Strings
 impl_zero!(String, String::from(""));
 
-// Lifetimes
+// str
 impl_zero!(<'a>, &'a str, "");
+
+// Vectors
+impl_zero!(<T>, Vec<T>, vec![]);
 
 #[cfg(test)]
 mod test_struct_gen {
@@ -338,5 +341,18 @@ mod test_struct_gen {
         assert_eq!(e.a, "");
         assert_eq!(e.b, "");
         assert_eq!(e.c, "");
+    }
+
+    #[test]
+    fn it_works_with_multiple_normal_vectors() {
+        struct_gen!(Example {
+            a: Vec<i32> b: Vec<bool>
+        });
+
+        let e = Example::new();
+        assert_eq!(e.a, vec![]);
+        assert_eq!(e.b, vec![]);
+        assert_eq!(e.a.len(), 0);
+        assert_eq!(e.b.len(), 0);
     }
 }
