@@ -346,6 +346,16 @@ mod test_struct_gen {
         assert_eq!(e.c, "");
     }
 
+     #[test]
+    fn it_works_with_the_static_lifetime() {
+        struct_gen!(Example {
+            a: &'static [i32]
+        });
+
+        let e = Example::new();
+        assert_eq!(e.a, &[]);
+    }
+
     #[test]
     fn it_works_with_multiple_normal_vectors() {
         struct_gen!(Example {
