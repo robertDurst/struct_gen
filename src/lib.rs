@@ -123,8 +123,8 @@ pub trait Zero {
 /// ```
 #[macro_export]
 macro_rules! impl_zero {
-    (< $lt:tt > , $t:ty, $e:expr) => {
-        impl<$lt> Zero for $t {
+    (<$($lt: tt),*> , $t:ty, $e:expr) => {
+        impl<$($lt,)*> Zero for $t {
             type Item = $t;
             fn zoor() -> Self::Item {
                 $e
@@ -171,6 +171,9 @@ impl_zero!(String, String::from(""));
 
 // str
 impl_zero!(<'a>, &'a str, "");
+
+// Slices
+impl_zero!(<'a, T>, &'a [T], &[]);
 
 // Vectors
 impl_zero!(<T>, Vec<T>, vec![]);
@@ -354,5 +357,15 @@ mod test_struct_gen {
         assert_eq!(e.b, vec![]);
         assert_eq!(e.a.len(), 0);
         assert_eq!(e.b.len(), 0);
+    }
+
+    #[test]
+    fn it_works_with_slices() {
+        struct_gen!(Example <'a> {
+            a: &'a [i32]
+        });
+
+        let e = Example::new();
+        assert_eq!(e.a, &[]);
     }
 }
