@@ -38,7 +38,7 @@
 
 #[macro_export]
 macro_rules! struct_gen (
-    ($s:ident <$($lt: tt),*> {$( $i: ident : $t: ty)*} ) => (
+    ($s:ident <$($lt: tt),+> {$( $i: ident : $t: ty)*} ) => (
         #[derive(Debug)]
         struct $s <$($lt,)*> {
             $(
@@ -123,7 +123,7 @@ pub trait Zero {
 /// ```
 #[macro_export]
 macro_rules! impl_zero {
-    (<$($lt: tt),*> , $t:ty, $e:expr) => {
+    (<$($lt: tt),+> , $t:ty, $e:expr) => {
         impl<$($lt,)*> Zero for $t {
             type Item = $t;
             fn zoor() -> Self::Item {
