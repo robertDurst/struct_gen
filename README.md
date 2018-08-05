@@ -17,7 +17,7 @@ Outlined in the milestone/issues [section](https://github.com/robertDurst/struct
         * Boolean
         * Char
         * Vectors (`std::vec::Vec`)
-        * Arrays
+        * Arrays (*maximum size of 10 for now*)
         * Slices
         * Floats
         * str

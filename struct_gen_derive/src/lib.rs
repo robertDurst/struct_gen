@@ -42,6 +42,8 @@ fn impl_struct_iter(fields: &VariantData) -> quote::Tokens {
     // capture all the types to impl Zero on
     let mut idents = Vec::new();
 
+    // This is some ugly nested matching.
+    // TODO: find a cleaner way to do this.
     match fields {
         VariantData::Tuple(ref fields) => {
             for (_, field) in fields.iter().enumerate() {
