@@ -36,6 +36,8 @@
 /// # }
 ///
 
+#[macro_use] extern crate struct_gen_derive;
+
 #[macro_export]
 macro_rules! struct_gen (
     ($s:ident <$($lt: tt),+> {$( $i: ident : $t: ty)*} ) => (
@@ -177,6 +179,25 @@ impl_zero!(<'a, T>, &'a [T], &[]);
 
 // Vectors
 impl_zero!(<T>, Vec<T>, vec![]);
+
+// Arrays
+#[derive(StructIterator)]
+struct _ImplArray(
+    bool,
+    char,
+    i8,
+    i16,
+    i32,
+    i64,
+    isize,
+    u8,
+    u16,
+    u32,
+    u64,
+    usize,
+    f32,
+    f64,
+);
 
 #[cfg(test)]
 mod test_struct_gen {
@@ -377,5 +398,17 @@ mod test_struct_gen {
 
         let e = Example::new();
         assert_eq!(e.a, &[]);
+    }
+
+    #[test]
+    fn it_works_with_arrays() {
+        struct_gen!(Example {
+            a: [i32; 1]
+            b: [f64; 2]
+        });
+
+        let e = Example::new();
+        assert_eq!(e.a[0], 0);
+        assert_eq!(e.b[1], 0.0);
     }
 }
