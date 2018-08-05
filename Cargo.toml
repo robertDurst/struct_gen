@@ -1,6 +1,6 @@
 [package]
 name = "struct_gen"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["robertdurst <rsdurst@colby.edu>"]
 description = "Automagically generate structs."
 repository = "https://github.com/robertDurst/struct_gen"

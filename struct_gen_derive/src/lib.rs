@@ -7,7 +7,8 @@ use proc_macro::TokenStream;
 use syn::Ty::Path;
 use syn::{Body, VariantData};
 
-/// struct_iterator
+/// struct_iterator is a procedural macro for taking a tuple struct of types
+/// implementing`Zero` on each type for fixed-size arrays of lengths [0,10].
 ///
 /// # struct_iterator
 /// Comments and boilerplate from [dtolnay's presentation at Mozilla][dtolnay],
@@ -15,6 +16,10 @@ use syn::{Body, VariantData};
 ///
 /// [dtolnay]: https://air.mozilla.org/rust-meetup-december-2016-12-15/
 /// [blog]: https://cbreeden.github.io/Macros11/
+/// 
+/// *Note:* for the internal `impl_struct_iter` function we use default for now instead
+/// of zoor. This will likely change by 0.2.0 release, however for now, where
+/// we are only interested in the zero in zero-or-override, this is fine.
 #[proc_macro_derive(StructIterator)]
 pub fn struct_iterator(input: TokenStream) -> TokenStream {
     // Construct a string representation of the type definition
@@ -37,6 +42,8 @@ fn impl_struct_iter(fields: &VariantData) -> quote::Tokens {
     // capture all the types to impl Zero on
     let mut idents = Vec::new();
 
+    // This is some ugly nested matching.
+    // TODO: find a cleaner way to do this.
     match fields {
         VariantData::Tuple(ref fields) => {
             for (_, field) in fields.iter().enumerate() {
@@ -57,7 +64,7 @@ fn impl_struct_iter(fields: &VariantData) -> quote::Tokens {
     let mut res = Vec::new();
 
     // If greater than 10, use a std::vec::Vec.
-    for i in 0..10 {
+    for i in 0..=10 {
         for x in idents.iter() {
             let size = i as usize;
             res.push(quote! {
@@ -68,7 +75,7 @@ fn impl_struct_iter(fields: &VariantData) -> quote::Tokens {
         }
     }
 
-    //
+    // return the rust code fragment
     quote! {
         #(#res)*
     }
