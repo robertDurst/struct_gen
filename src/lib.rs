@@ -2,6 +2,9 @@
 //! # Struct_gen
 //! Struct_gen automagically generates boilerplate code for structs.
 
+#[macro_use]
+extern crate struct_gen_derive;
+
 /// `struct_gen!` is a macro for generating struct definitions and constructors.
 ///
 /// # struct_gen
@@ -35,10 +38,9 @@
 /// # assert_eq!(example_struct.thing, 0 as char);
 /// # }
 ///
-
 #[macro_export]
 macro_rules! struct_gen (
-    ($s:ident <$($lt: tt),*> {$( $i: ident : $t: ty)*} ) => (
+    ($s:ident <$($lt: tt),+> {$( $i: ident : $t: ty)*} ) => (
         #[derive(Debug)]
         struct $s <$($lt,)*> {
             $(
@@ -57,7 +59,7 @@ macro_rules! struct_gen (
        }
     );
 
-    
+
 
 
     ($s:ident {$( $i: ident : $t: ty)*} ) => (
@@ -123,8 +125,8 @@ pub trait Zero {
 /// ```
 #[macro_export]
 macro_rules! impl_zero {
-     (<$lt: tt>, $t:ty, $e:expr) => {
-        impl<$lt> Zero for $t {
+    (<$($lt: tt),+> , $t:ty, $e:expr) => {
+        impl<$($lt,)*> Zero for $t {
             type Item = $t;
             fn zoor() -> Self::Item {
                 $e
@@ -169,8 +171,36 @@ impl_zero!(f64, 0.0);
 // Strings
 impl_zero!(String, String::from(""));
 
-// Lifetimes
+// str
 impl_zero!(<'a>, &'a str, "");
+
+// Slices
+impl_zero!(<'a, T>, &'a [T], &[]);
+
+// Vectors
+impl_zero!(<T>, Vec<T>, vec![]);
+
+// Arrays
+// For now arrays will only be availible for
+// fixed sizes [0, 10]. For everything else,
+// please use std::vec::Vec.
+#[derive(StructIterator)]
+struct _ImplArray(
+    bool,
+    char,
+    i8,
+    i16,
+    i32,
+    i64,
+    isize,
+    u8,
+    u16,
+    u32,
+    u64,
+    usize,
+    f32,
+    f64,
+);
 
 #[cfg(test)]
 mod test_struct_gen {
@@ -338,5 +368,55 @@ mod test_struct_gen {
         assert_eq!(e.a, "");
         assert_eq!(e.b, "");
         assert_eq!(e.c, "");
+    }
+
+    #[test]
+    fn it_works_with_the_static_lifetime() {
+        struct_gen!(Example {
+            a: &'static [i32]
+        });
+
+        let e = Example::new();
+        assert_eq!(e.a, &[]);
+    }
+
+    #[test]
+    fn it_works_with_multiple_normal_vectors() {
+        struct_gen!(Example {
+            a: Vec<i32> b: Vec<bool>
+        });
+
+        let e = Example::new();
+        assert_eq!(e.a, vec![]);
+        assert_eq!(e.b, vec![]);
+        assert_eq!(e.a.len(), 0);
+        assert_eq!(e.b.len(), 0);
+    }
+
+    #[test]
+    fn it_works_with_slices() {
+        struct_gen!(Example <'a> {
+            a: &'a [i32]
+        });
+
+        let e = Example::new();
+        assert_eq!(e.a, &[]);
+    }
+
+    #[test]
+    fn it_works_with_arrays() {
+        struct_gen!(Example {
+            a: [i32; 1]
+            b: [f64; 2]
+
+            c: [bool; 5]
+            d: [usize; 10]
+        });
+
+        let e = Example::new();
+        assert_eq!(e.a[0], 0);
+        assert_eq!(e.b[1], 0.0);
+        assert_eq!(e.c[4], false);
+        assert_eq!(e.d[7], 0);
     }
 }

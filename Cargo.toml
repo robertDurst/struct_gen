@@ -1,6 +1,6 @@
 [package]
 name = "struct_gen"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["robertdurst <rsdurst@colby.edu>"]
 description = "Automagically generate structs."
 repository = "https://github.com/robertDurst/struct_gen"
@@ -9,6 +9,5 @@ keywords = ["macro", "struct", "gen"]
 categories = ["development-tools"]
 license = "MIT"
 
-[badges]
-travis-ci = { repository = "robertDurst/struct_gen" }
-
+[dependencies]
+struct_gen_derive = "0.1.0"
