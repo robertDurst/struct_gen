@@ -203,7 +203,6 @@ struct _ImplArray(
     f64,
 );
 
-
 #[cfg(test)]
 mod test_struct_gen {
     use super::*;
@@ -410,6 +409,7 @@ mod test_struct_gen {
         struct_gen!(Example {
             a: [i32; 1]
             b: [f64; 2]
+
             c: [bool; 5]
             d: [usize; 10]
         });
