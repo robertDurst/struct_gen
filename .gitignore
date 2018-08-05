@@ -1,2 +1,4 @@
 /target
 **/*.rs.bk
+/struct_gen/target
+/struct_gen_derive/target
