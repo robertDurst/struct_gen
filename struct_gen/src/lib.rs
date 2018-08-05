@@ -36,7 +36,8 @@
 /// # }
 ///
 
-#[macro_use] extern crate struct_gen_derive;
+#[macro_use]
+extern crate struct_gen_derive;
 
 #[macro_export]
 macro_rules! struct_gen (
@@ -367,7 +368,7 @@ mod test_struct_gen {
         assert_eq!(e.c, "");
     }
 
-     #[test]
+    #[test]
     fn it_works_with_the_static_lifetime() {
         struct_gen!(Example {
             a: &'static [i32]
