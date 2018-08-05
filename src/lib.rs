@@ -182,6 +182,9 @@ impl_zero!(<'a, T>, &'a [T], &[]);
 impl_zero!(<T>, Vec<T>, vec![]);
 
 // Arrays
+// For now arrays will only be availible for
+// fixed sizes [0, 10]. For everything else,
+// please use std::vec::Vec.
 #[derive(StructIterator)]
 struct _ImplArray(
     bool,
@@ -407,10 +410,14 @@ mod test_struct_gen {
         struct_gen!(Example {
             a: [i32; 1]
             b: [f64; 2]
+            c: [bool; 5]
+            d: [usize; 10]
         });
 
         let e = Example::new();
         assert_eq!(e.a[0], 0);
         assert_eq!(e.b[1], 0.0);
+        assert_eq!(e.c[4], false);
+        assert_eq!(e.d[7], 0);
     }
 }

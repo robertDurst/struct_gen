@@ -8,6 +8,7 @@ A macro based tool for automagically generating structs.
 Outlined in the milestone/issues [section](https://github.com/robertDurst/struct_gen/issues).
 
 ## Changelog
+
 * 0.1.1 - August 5, 2018
     * Support for lifetimes
     * Support for 10 of 11 primitive types (tuples will come with next release)  including:

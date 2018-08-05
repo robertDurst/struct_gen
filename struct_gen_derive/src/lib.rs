@@ -16,6 +16,10 @@ use syn::{Body, VariantData};
 ///
 /// [dtolnay]: https://air.mozilla.org/rust-meetup-december-2016-12-15/
 /// [blog]: https://cbreeden.github.io/Macros11/
+/// 
+/// *Note:* for the internal `impl_struct_iter` function we use default for now instead
+/// of zoor. This will likely change by 0.2.0 release, however for now, where
+/// we are only interested in the zero in zero-or-override, this is fine.
 #[proc_macro_derive(StructIterator)]
 pub fn struct_iterator(input: TokenStream) -> TokenStream {
     // Construct a string representation of the type definition
@@ -58,7 +62,7 @@ fn impl_struct_iter(fields: &VariantData) -> quote::Tokens {
     let mut res = Vec::new();
 
     // If greater than 10, use a std::vec::Vec.
-    for i in 0..10 {
+    for i in 0..=10 {
         for x in idents.iter() {
             let size = i as usize;
             res.push(quote! {
