@@ -200,8 +200,6 @@ struct _ImplArray(
     f64,
 );
 
-// Tuples
-
 
 #[cfg(test)]
 mod test_struct_gen {

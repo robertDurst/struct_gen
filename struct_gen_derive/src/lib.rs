@@ -7,7 +7,8 @@ use proc_macro::TokenStream;
 use syn::Ty::Path;
 use syn::{Body, VariantData};
 
-/// struct_iterator
+/// struct_iterator is a procedural macro for taking a tuple struct of types
+/// implementing`Zero` on each type for fixed-size arrays of lengths [0,10].
 ///
 /// # struct_iterator
 /// Comments and boilerplate from [dtolnay's presentation at Mozilla][dtolnay],
@@ -68,7 +69,7 @@ fn impl_struct_iter(fields: &VariantData) -> quote::Tokens {
         }
     }
 
-    //
+    // return the rust code fragment
     quote! {
         #(#res)*
     }
